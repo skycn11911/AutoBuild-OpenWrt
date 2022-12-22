@@ -1,25 +1,21 @@
-#=================================================
-# Description: Build OpenWrt using GitHub Actions
-# Lisence: MIT
-# Author: eSirPlayground
-# Youtube Channel: https://goo.gl/fvkdwm 
-#=================================================
+name: 编译 OpenWrt 固件
+on:
+  repository_dispatch:
+  workflow_dispatch:
+    inputs:
+      ssh:
+        description: 'SSH connection to Actions'
+        required: false
+        default: 'false'
 
-name: Build_x86_64
-
-on: 
-  release:
-    types: [published]
-
-  push:
-    branches: 
-      - master
-
-  #schedule:
-  #  - cron: 0 8 * * 5
-  
-  #watch:
-  #  types: [started]
+env:
+  Github: https://github.com/${{github.repository}}
+  Author: ${{github.actor}}
+  Apidz: ${{github.repository}}
+  Run_number: ${{github.run_number}}
+  Run_workflow: ${{github.workflow}}
+  REPO_TOKEN: ${{ secrets.REPO_TOKEN }}
+  TZ: Asia/Shanghai
 
 jobs:
   build:
@@ -92,7 +88,12 @@ jobs:
         [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config
         chmod +x ./customize.sh && ./customize.sh
         cd openwrt && make defconfig
-      
+    - name: SSH connection
+      uses: P3TERX/ssh2actions@v1.0.0
+      if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false') || contains(github.event.action, 'ssh')
+      env:
+         TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+         TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}      
     - name: Download package
       working-directory: ./openwrt
       run: |
