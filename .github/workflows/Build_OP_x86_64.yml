@@ -1,4 +1,4 @@
-name: x86-64
+name: Build_OP_x86_64
 on:
   repository_dispatch:
   workflow_dispatch:
