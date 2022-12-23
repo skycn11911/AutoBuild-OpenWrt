@@ -67,6 +67,7 @@ jobs:
     - name: Update & Install feeds
       working-directory: ./openwrt
       run: |
+       rm -rf package/gd772 && git clone https://github.com/gd0772/package/tree/main/luci-app-pppoe-server openwrt/package/gd772/luci-app-pppoe-server
         ./scripts/feeds update -a
         ./scripts/feeds install -a
         ./scripts/feeds install -a
